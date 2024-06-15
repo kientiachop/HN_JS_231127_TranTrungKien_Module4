@@ -1,85 +1,71 @@
-// src/components/TodoList.tsx
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import axios from "axios";
 
-interface Task {
-  id: number;
-  name: string;
-  status: boolean;
-}
+export default function TodoList() {
+  const [tasks,setTask]=useState([]);
+  const [newTask, setNewTask] = useState({
+    name: '',
+    status: 0
+  })
 
-const TodoList: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [newTaskName, setNewTaskName] = useState<string>('');
+  // useEffect(() => {
+  //   const fetchTasks = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:8000/api/v1/tasks');
+  //       console.log("1111",response);
+        
+  //       setTask(response.data.data);
+  //     } catch (error) {
+  //       console.error('Error fetching tasks:', error);
+  //     }
+  //   };
 
-  useEffect(() => {
-    fetchTasks();
-  }, []);
+  //   fetchTasks();
+  // }, []);
 
-  const fetchTasks = async () => {
+  const handleNewTask= (e:any) =>{
+    setNewTask({
+      ...newTask,
+      name: e.target.value
+    });
+  }
+  const createTask = async() =>{
     try {
-      const response = await axios.get('/api/v1/tasks');
-      setTasks(response.data);
+      const response = await axios.post('http://localhost:8000/api/v1/task', newTask);
+      window.location.reload();
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
-  };
+  }
 
-  const addTask = async () => {
-    try {
-      const response = await axios.post('/api/v1/task', { name: newTaskName, status: false });
-      setTasks([...tasks, response.data]);
-      setNewTaskName('');
-    } catch (error) {
-      console.error('Error adding task:', error);
-    }
-  };
+  // const deleteTask = async(id:any) =>{
+  //   try {
+  //     const response = await axios.delete(`http://localhost:8000/api/v1/task/${id}`);
+  //     window.location.reload();
+  //   } catch (error) {
+  //     console.error('Error fetching tasks:', error);
+  //   }
+  // }
 
-  const updateTask = async (id: number, status: boolean) => {
-    try {
-      const response = await axios.put(`/api/v1/task/${id}`, { status });
-      setTasks(tasks.map(task => (task.id === id ? response.data : task)));
-    } catch (error) {
-      console.error('Error updating task:', error);
-    }
-  };
-
-  const deleteTask = async (id: number) => {
-    try {
-      await axios.delete(`/api/v1/task/${id}`);
-      setTasks(tasks.filter(task => task.id !== id));
-    } catch (error) {
-      console.error('Error deleting task:', error);
-    }
-  };
-
+  
   return (
     <div>
-      <h1>Todo List</h1>
-      <input
-        type="text"
-        value={newTaskName}
-        onChange={e => setNewTaskName(e.target.value)}
-        placeholder="Add new task"
-      />
-      <button onClick={addTask}>Add Task</button>
-      <ul>
-        {tasks.map(task => (
-          <li key={task.id}>
-            <span style={{ textDecoration: task.status ? 'line-through' : 'none' }}>
-              {task.name}
-            </span>
-            <input
-              type="checkbox"
-              checked={task.status}
-              onChange={() => updateTask(task.id, !task.status)}
-            />
-            <button onClick={() => deleteTask(task.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
+      {/* {tasks.map((task) => (
+        <div key={task.id} className="todo-item">
+          <span>{task.name}</span>
+          <input type="checkbox" checked={task.status} />
+          <button className="delete-btn" onClick={() => deleteTask(task.id)}>🗑️</button>
+        </div>
+      ))} */}
+      <label className="toggle-container">
+          Move done items at the end?
+          <input type="checkbox" />
+          <span className="slider"></span>
+      </label>
+      <div className="add-item-container">
+          <input type="text" placeholder="Add to the todo list" onChange={handleNewTask}/>
+          <button onClick={() => createTask()}>Add Item</button>
+      </div>
     </div>
-  );
-};
-
-export default TodoList;
+  )
+}

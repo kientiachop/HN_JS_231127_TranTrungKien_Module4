@@ -1,12 +1,11 @@
+"use strict";
 // import { Model, DataTypes } from 'sequelize';
 // import sequelize from '../config/database';
-
 // class Task extends Model {
 //   public id!: number;
 //   public name!: string;
 //   public status!: boolean;
 // }
-
 // Task.init({
 //   id: {
 //     type: DataTypes.INTEGER.UNSIGNED,
@@ -25,5 +24,4 @@
 //   sequelize,
 //   tableName: 'tasks',
 // });
-
 // export default Task;
